@@ -1,0 +1,9 @@
+{
+	"name": "ADF-NYC-Payroll",
+	"location": "germanywestcentral",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "18af0ff8-1aa1-4a9f-af77-b4b337e52f58",
+		"tenantId": "9ac6b000-1274-4f46-ac65-4909a58915b2"
+	}
+}
