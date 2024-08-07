@@ -722,7 +722,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Load_Agency_Master_Data')]",
+			"name": "[concat(parameters('factoryName'), '/Load_2020_Payroll_Data')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -735,34 +735,6 @@
 								"type": "DatasetReference"
 							},
 							"name": "Source2020Payroll"
-						},
-						{
-							"dataset": {
-								"referenceName": "Dataset_ADLSGen2_Payroll2021",
-								"type": "DatasetReference"
-							},
-							"name": "Source2021Payroll"
-						},
-						{
-							"dataset": {
-								"referenceName": "Dataset_ADLSGen2_EmpMaster",
-								"type": "DatasetReference"
-							},
-							"name": "SourceEmpMaster"
-						},
-						{
-							"dataset": {
-								"referenceName": "Dataset_ADLSGen2_TitleMaster",
-								"type": "DatasetReference"
-							},
-							"name": "SourceTitleMaster"
-						},
-						{
-							"dataset": {
-								"referenceName": "Dataset_ADLSGen2_AgencyMaster",
-								"type": "DatasetReference"
-							},
-							"name": "SourceAgencyMaster"
 						}
 					],
 					"sinks": [
@@ -772,34 +744,6 @@
 								"type": "DatasetReference"
 							},
 							"name": "Sink2020Payroll"
-						},
-						{
-							"dataset": {
-								"referenceName": "ds_sql_nyc_payroll_data_2021",
-								"type": "DatasetReference"
-							},
-							"name": "Sink2021Payroll"
-						},
-						{
-							"dataset": {
-								"referenceName": "ds_sql_nyc_payroll_emp_md",
-								"type": "DatasetReference"
-							},
-							"name": "SinkEmpMaster"
-						},
-						{
-							"dataset": {
-								"referenceName": "ds_sql_nyc_payroll_title_md",
-								"type": "DatasetReference"
-							},
-							"name": "SinkTitleMaster"
-						},
-						{
-							"dataset": {
-								"referenceName": "ds_sql_nyc_payroll_agency_md",
-								"type": "DatasetReference"
-							},
-							"name": "SinkAgencyMaster"
 						}
 					],
 					"transformations": [],
@@ -828,52 +772,6 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false) ~> Source2020Payroll",
-						"source(output(",
-						"          FiscalYear as string,",
-						"          PayrollNumber as string,",
-						"          AgencyCode as string,",
-						"          AgencyName as string,",
-						"          EmployeeID as string,",
-						"          LastName as string,",
-						"          FirstName as string,",
-						"          AgencyStartDate as string,",
-						"          WorkLocationBorough as string,",
-						"          TitleCode as string,",
-						"          TitleDescription as string,",
-						"          LeaveStatusasofJune30 as string,",
-						"          BaseSalary as string,",
-						"          PayBasis as string,",
-						"          RegularHours as string,",
-						"          RegularGrossPaid as string,",
-						"          OTHours as string,",
-						"          TotalOTPaid as string,",
-						"          TotalOtherPay as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> Source2021Payroll",
-						"source(output(",
-						"          EmployeeID as string,",
-						"          LastName as string,",
-						"          FirstName as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> SourceEmpMaster",
-						"source(output(",
-						"          TitleCode as string,",
-						"          TitleDescription as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> SourceTitleMaster",
-						"source(output(",
-						"          AgencyID as string,",
-						"          AgencyName as string",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false) ~> SourceAgencyMaster",
 						"Source2020Payroll sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
@@ -925,7 +823,66 @@
 						"          OTHours,",
 						"          TotalOTPaid,",
 						"          TotalOtherPay",
-						"     )) ~> Sink2020Payroll",
+						"     )) ~> Sink2020Payroll"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Dataset_ADLSGen2_Payroll2020')]",
+				"[concat(variables('factoryId'), '/datasets/ds_sql_nyc_payroll_data_2020')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Load_2021_Payroll_Data')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Dataset_ADLSGen2_Payroll2021",
+								"type": "DatasetReference"
+							},
+							"name": "Source2021Payroll"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "ds_sql_nyc_payroll_data_2021",
+								"type": "DatasetReference"
+							},
+							"name": "Sink2021Payroll"
+						}
+					],
+					"transformations": [],
+					"scriptLines": [
+						"source(output(",
+						"          FiscalYear as string,",
+						"          PayrollNumber as string,",
+						"          AgencyCode as string,",
+						"          AgencyName as string,",
+						"          EmployeeID as string,",
+						"          LastName as string,",
+						"          FirstName as string,",
+						"          AgencyStartDate as string,",
+						"          WorkLocationBorough as string,",
+						"          TitleCode as string,",
+						"          TitleDescription as string,",
+						"          LeaveStatusasofJune30 as string,",
+						"          BaseSalary as string,",
+						"          PayBasis as string,",
+						"          RegularHours as string,",
+						"          RegularGrossPaid as string,",
+						"          OTHours as string,",
+						"          TotalOTPaid as string,",
+						"          TotalOtherPay as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> Source2021Payroll",
 						"Source2021Payroll sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
@@ -977,7 +934,50 @@
 						"          OTHours,",
 						"          TotalOTPaid,",
 						"          TotalOtherPay",
-						"     )) ~> Sink2021Payroll",
+						"     )) ~> Sink2021Payroll"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Dataset_ADLSGen2_Payroll2021')]",
+				"[concat(variables('factoryId'), '/datasets/ds_sql_nyc_payroll_data_2021')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Load_Employee_Master_Data')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Dataset_ADLSGen2_EmpMaster",
+								"type": "DatasetReference"
+							},
+							"name": "SourceEmpMaster"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "ds_sql_nyc_payroll_emp_md",
+								"type": "DatasetReference"
+							},
+							"name": "SinkEmpMaster"
+						}
+					],
+					"transformations": [],
+					"scriptLines": [
+						"source(output(",
+						"          EmployeeID as string,",
+						"          LastName as string,",
+						"          FirstName as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> SourceEmpMaster",
 						"SourceEmpMaster sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
@@ -997,7 +997,49 @@
 						"          EmployeeID,",
 						"          LastName,",
 						"          FirstName",
-						"     )) ~> SinkEmpMaster",
+						"     )) ~> SinkEmpMaster"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Dataset_ADLSGen2_EmpMaster')]",
+				"[concat(variables('factoryId'), '/datasets/ds_sql_nyc_payroll_emp_md')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Load_Job_Title_Data')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Dataset_ADLSGen2_TitleMaster",
+								"type": "DatasetReference"
+							},
+							"name": "SourceTitleMaster"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "ds_sql_nyc_payroll_title_md",
+								"type": "DatasetReference"
+							},
+							"name": "SinkTitleMaster"
+						}
+					],
+					"transformations": [],
+					"scriptLines": [
+						"source(output(",
+						"          TitleCode as string,",
+						"          TitleDescription as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> SourceTitleMaster",
 						"SourceTitleMaster sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
@@ -1015,7 +1057,49 @@
 						"     mapColumn(",
 						"          TitleCode,",
 						"          TitleDescription",
-						"     )) ~> SinkTitleMaster",
+						"     )) ~> SinkTitleMaster"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Dataset_ADLSGen2_TitleMaster')]",
+				"[concat(variables('factoryId'), '/datasets/ds_sql_nyc_payroll_title_md')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Load_Agency_Master_Data')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Dataset_ADLSGen2_AgencyMaster",
+								"type": "DatasetReference"
+							},
+							"name": "SourceAgencyMaster"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "ds_sql_nyc_payroll_agency_md",
+								"type": "DatasetReference"
+							},
+							"name": "SinkAgencyMaster"
+						}
+					],
+					"transformations": [],
+					"scriptLines": [
+						"source(output(",
+						"          AgencyID as string,",
+						"          AgencyName as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> SourceAgencyMaster",
 						"SourceAgencyMaster sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
@@ -1038,15 +1122,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Dataset_ADLSGen2_Payroll2020')]",
-				"[concat(variables('factoryId'), '/datasets/Dataset_ADLSGen2_Payroll2021')]",
-				"[concat(variables('factoryId'), '/datasets/Dataset_ADLSGen2_EmpMaster')]",
-				"[concat(variables('factoryId'), '/datasets/Dataset_ADLSGen2_TitleMaster')]",
 				"[concat(variables('factoryId'), '/datasets/Dataset_ADLSGen2_AgencyMaster')]",
-				"[concat(variables('factoryId'), '/datasets/ds_sql_nyc_payroll_data_2020')]",
-				"[concat(variables('factoryId'), '/datasets/ds_sql_nyc_payroll_data_2021')]",
-				"[concat(variables('factoryId'), '/datasets/ds_sql_nyc_payroll_emp_md')]",
-				"[concat(variables('factoryId'), '/datasets/ds_sql_nyc_payroll_title_md')]",
 				"[concat(variables('factoryId'), '/datasets/ds_sql_nyc_payroll_agency_md')]"
 			]
 		}
