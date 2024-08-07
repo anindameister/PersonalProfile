@@ -722,7 +722,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/NYC_Payroll_Data_2021')]",
+			"name": "[concat(parameters('factoryName'), '/Load_Employee_Master_Data')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -744,6 +744,13 @@
 							"name": "Source2021Payroll"
 						},
 						{
+							"dataset": {
+								"referenceName": "Dataset_ADLSGen2_EmpMaster",
+								"type": "DatasetReference"
+							},
+							"name": "SourceEmpMaster"
+						},
+						{
 							"name": "source1"
 						}
 					],
@@ -761,6 +768,13 @@
 								"type": "DatasetReference"
 							},
 							"name": "Sink2021Payroll"
+						},
+						{
+							"dataset": {
+								"referenceName": "ds_sql_nyc_payroll_emp_md",
+								"type": "DatasetReference"
+							},
+							"name": "SinkEmpMaster"
 						}
 					],
 					"transformations": [],
@@ -813,6 +827,14 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false) ~> Source2021Payroll",
+						"source(output(",
+						"          EmployeeID as string,",
+						"          LastName as string,",
+						"          FirstName as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> SourceEmpMaster",
 						"source(allowSchemaDrift: true,",
 						"     validateSchema: false) ~> source1",
 						"Source2020Payroll sink(allowSchemaDrift: true,",
@@ -918,15 +940,37 @@
 						"          OTHours,",
 						"          TotalOTPaid,",
 						"          TotalOtherPay",
-						"     )) ~> Sink2021Payroll"
+						"     )) ~> Sink2021Payroll",
+						"SourceEmpMaster sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          EmployeeID as string,",
+						"          LastName as string,",
+						"          FirstName as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          EmployeeID,",
+						"          LastName,",
+						"          FirstName",
+						"     )) ~> SinkEmpMaster"
 					]
 				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/Dataset_ADLSGen2_Payroll2020')]",
 				"[concat(variables('factoryId'), '/datasets/Dataset_ADLSGen2_Payroll2021')]",
+				"[concat(variables('factoryId'), '/datasets/Dataset_ADLSGen2_EmpMaster')]",
 				"[concat(variables('factoryId'), '/datasets/ds_sql_nyc_payroll_data_2020')]",
-				"[concat(variables('factoryId'), '/datasets/ds_sql_nyc_payroll_data_2021')]"
+				"[concat(variables('factoryId'), '/datasets/ds_sql_nyc_payroll_data_2021')]",
+				"[concat(variables('factoryId'), '/datasets/ds_sql_nyc_payroll_emp_md')]"
 			]
 		}
 	]
