@@ -1,5 +1,5 @@
 {
-	"name": "Load_Agency_Master_Data",
+	"name": "Load_2020_Payroll_Data",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
