@@ -1,5 +1,5 @@
 {
-	"name": "Load_Job_Title_Data",
+	"name": "Load_Agency_Master_Data",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -33,7 +33,11 @@
 					"name": "SourceTitleMaster"
 				},
 				{
-					"name": "source1"
+					"dataset": {
+						"referenceName": "Dataset_ADLSGen2_AgencyMaster",
+						"type": "DatasetReference"
+					},
+					"name": "SourceAgencyMaster"
 				}
 			],
 			"sinks": [
@@ -64,6 +68,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "SinkTitleMaster"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_sql_nyc_payroll_agency_md",
+						"type": "DatasetReference"
+					},
+					"name": "SinkAgencyMaster"
 				}
 			],
 			"transformations": [],
@@ -131,8 +142,13 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> SourceTitleMaster",
-				"source(allowSchemaDrift: true,",
-				"     validateSchema: false) ~> source1",
+				"source(output(",
+				"          AgencyID as string,",
+				"          AgencyName as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SourceAgencyMaster",
 				"Source2020Payroll sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -274,7 +290,25 @@
 				"     mapColumn(",
 				"          TitleCode,",
 				"          TitleDescription",
-				"     )) ~> SinkTitleMaster"
+				"     )) ~> SinkTitleMaster",
+				"SourceAgencyMaster sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          AgencyID as string,",
+				"          AgencyName as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          AgencyID,",
+				"          AgencyName",
+				"     )) ~> SinkAgencyMaster"
 			]
 		}
 	}
