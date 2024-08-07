@@ -1,5 +1,5 @@
 {
-	"name": "Load_Employee_Master_Data",
+	"name": "Load_Job_Title_Data",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -24,6 +24,16 @@
 						"type": "DatasetReference"
 					},
 					"name": "SourceEmpMaster"
+				},
+				{
+					"dataset": {
+						"referenceName": "Dataset_ADLSGen2_TitleMaster",
+						"type": "DatasetReference"
+					},
+					"name": "SourceTitleMaster"
+				},
+				{
+					"name": "source1"
 				}
 			],
 			"sinks": [
@@ -47,6 +57,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "SinkEmpMaster"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_sql_nyc_payroll_title_md",
+						"type": "DatasetReference"
+					},
+					"name": "SinkTitleMaster"
 				}
 			],
 			"transformations": [],
@@ -107,6 +124,15 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> SourceEmpMaster",
+				"source(output(",
+				"          TitleCode as string,",
+				"          TitleDescription as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SourceTitleMaster",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false) ~> source1",
 				"Source2020Payroll sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -230,7 +256,25 @@
 				"          EmployeeID,",
 				"          LastName,",
 				"          FirstName",
-				"     )) ~> SinkEmpMaster"
+				"     )) ~> SinkEmpMaster",
+				"SourceTitleMaster sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          TitleCode as string,",
+				"          TitleDescription as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          TitleCode,",
+				"          TitleDescription",
+				"     )) ~> SinkTitleMaster"
 			]
 		}
 	}
