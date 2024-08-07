@@ -1,21 +1,55 @@
 {
-	"name": "dataflow1",
+	"name": "Load_2020_Payroll_to_SQL",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "ds_sql_nyc_payroll_data_2020",
+						"referenceName": "Dataset_ADLSGen2_Payroll2020",
 						"type": "DatasetReference"
 					},
 					"name": "Source2020Payroll"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_nyc_payroll_data_2020",
+						"type": "DatasetReference"
+					},
+					"name": "Sink2020Payroll"
+				}
+			],
 			"transformations": [],
 			"scriptLines": [
 				"source(output(",
+				"          FiscalYear as string,",
+				"          PayrollNumber as string,",
+				"          AgencyID as string,",
+				"          AgencyName as string,",
+				"          EmployeeID as string,",
+				"          LastName as string,",
+				"          FirstName as string,",
+				"          AgencyStartDate as string,",
+				"          WorkLocationBorough as string,",
+				"          TitleCode as string,",
+				"          TitleDescription as string,",
+				"          LeaveStatusasofJune30 as string,",
+				"          BaseSalary as string,",
+				"          PayBasis as string,",
+				"          RegularHours as string,",
+				"          RegularGrossPaid as string,",
+				"          OTHours as string,",
+				"          TotalOTPaid as string,",
+				"          TotalOtherPay as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Source2020Payroll",
+				"Source2020Payroll sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
 				"          FiscalYear as integer,",
 				"          PayrollNumber as integer,",
 				"          AgencyID as string,",
@@ -36,10 +70,35 @@
 				"          TotalOTPaid as double,",
 				"          TotalOtherPay as double",
 				"     ),",
-				"     allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> Source2020Payroll"
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          FiscalYear,",
+				"          PayrollNumber,",
+				"          AgencyID,",
+				"          AgencyName,",
+				"          EmployeeID,",
+				"          LastName,",
+				"          FirstName,",
+				"          AgencyStartDate,",
+				"          WorkLocationBorough,",
+				"          TitleCode,",
+				"          TitleDescription,",
+				"          LeaveStatusasofJune30,",
+				"          BaseSalary,",
+				"          PayBasis,",
+				"          RegularHours,",
+				"          RegularGrossPaid,",
+				"          OTHours,",
+				"          TotalOTPaid,",
+				"          TotalOtherPay",
+				"     )) ~> Sink2020Payroll"
 			]
 		}
 	}
