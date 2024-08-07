@@ -722,7 +722,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Load_Employee_Master_Data')]",
+			"name": "[concat(parameters('factoryName'), '/Load_Agency_Master_Data')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -751,7 +751,18 @@
 							"name": "SourceEmpMaster"
 						},
 						{
-							"name": "source1"
+							"dataset": {
+								"referenceName": "Dataset_ADLSGen2_TitleMaster",
+								"type": "DatasetReference"
+							},
+							"name": "SourceTitleMaster"
+						},
+						{
+							"dataset": {
+								"referenceName": "Dataset_ADLSGen2_AgencyMaster",
+								"type": "DatasetReference"
+							},
+							"name": "SourceAgencyMaster"
 						}
 					],
 					"sinks": [
@@ -775,6 +786,20 @@
 								"type": "DatasetReference"
 							},
 							"name": "SinkEmpMaster"
+						},
+						{
+							"dataset": {
+								"referenceName": "ds_sql_nyc_payroll_title_md",
+								"type": "DatasetReference"
+							},
+							"name": "SinkTitleMaster"
+						},
+						{
+							"dataset": {
+								"referenceName": "ds_sql_nyc_payroll_agency_md",
+								"type": "DatasetReference"
+							},
+							"name": "SinkAgencyMaster"
 						}
 					],
 					"transformations": [],
@@ -835,8 +860,20 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false) ~> SourceEmpMaster",
-						"source(allowSchemaDrift: true,",
-						"     validateSchema: false) ~> source1",
+						"source(output(",
+						"          TitleCode as string,",
+						"          TitleDescription as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> SourceTitleMaster",
+						"source(output(",
+						"          AgencyID as string,",
+						"          AgencyName as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> SourceAgencyMaster",
 						"Source2020Payroll sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     input(",
@@ -960,7 +997,43 @@
 						"          EmployeeID,",
 						"          LastName,",
 						"          FirstName",
-						"     )) ~> SinkEmpMaster"
+						"     )) ~> SinkEmpMaster",
+						"SourceTitleMaster sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          TitleCode as string,",
+						"          TitleDescription as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          TitleCode,",
+						"          TitleDescription",
+						"     )) ~> SinkTitleMaster",
+						"SourceAgencyMaster sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          AgencyID as string,",
+						"          AgencyName as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          AgencyID,",
+						"          AgencyName",
+						"     )) ~> SinkAgencyMaster"
 					]
 				}
 			},
@@ -968,9 +1041,13 @@
 				"[concat(variables('factoryId'), '/datasets/Dataset_ADLSGen2_Payroll2020')]",
 				"[concat(variables('factoryId'), '/datasets/Dataset_ADLSGen2_Payroll2021')]",
 				"[concat(variables('factoryId'), '/datasets/Dataset_ADLSGen2_EmpMaster')]",
+				"[concat(variables('factoryId'), '/datasets/Dataset_ADLSGen2_TitleMaster')]",
+				"[concat(variables('factoryId'), '/datasets/Dataset_ADLSGen2_AgencyMaster')]",
 				"[concat(variables('factoryId'), '/datasets/ds_sql_nyc_payroll_data_2020')]",
 				"[concat(variables('factoryId'), '/datasets/ds_sql_nyc_payroll_data_2021')]",
-				"[concat(variables('factoryId'), '/datasets/ds_sql_nyc_payroll_emp_md')]"
+				"[concat(variables('factoryId'), '/datasets/ds_sql_nyc_payroll_emp_md')]",
+				"[concat(variables('factoryId'), '/datasets/ds_sql_nyc_payroll_title_md')]",
+				"[concat(variables('factoryId'), '/datasets/ds_sql_nyc_payroll_agency_md')]"
 			]
 		}
 	]
