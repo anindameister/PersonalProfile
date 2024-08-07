@@ -1,5 +1,5 @@
 {
-	"name": "NYC_Payroll_Data_2021",
+	"name": "Load_Employee_Master_Data",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
@@ -17,6 +17,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "Source2021Payroll"
+				},
+				{
+					"dataset": {
+						"referenceName": "Dataset_ADLSGen2_EmpMaster",
+						"type": "DatasetReference"
+					},
+					"name": "SourceEmpMaster"
 				}
 			],
 			"sinks": [
@@ -33,6 +40,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "Sink2021Payroll"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_sql_nyc_payroll_emp_md",
+						"type": "DatasetReference"
+					},
+					"name": "SinkEmpMaster"
 				}
 			],
 			"transformations": [],
@@ -85,6 +99,14 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> Source2021Payroll",
+				"source(output(",
+				"          EmployeeID as string,",
+				"          LastName as string,",
+				"          FirstName as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SourceEmpMaster",
 				"Source2020Payroll sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -188,7 +210,27 @@
 				"          OTHours,",
 				"          TotalOTPaid,",
 				"          TotalOtherPay",
-				"     )) ~> Sink2021Payroll"
+				"     )) ~> Sink2021Payroll",
+				"SourceEmpMaster sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          EmployeeID as string,",
+				"          LastName as string,",
+				"          FirstName as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          EmployeeID,",
+				"          LastName,",
+				"          FirstName",
+				"     )) ~> SinkEmpMaster"
 			]
 		}
 	}
