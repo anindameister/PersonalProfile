@@ -32,6 +32,12 @@
 				},
 				{
 					"name": "FilterFiscalYear"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "aggregate1"
 				}
 			],
 			"scriptLines": [
@@ -132,7 +138,14 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> SelectPayroll2021",
-				"UnionPayrollData filter(ERROR_FUNCTION('')) ~> FilterFiscalYear"
+				"UnionPayrollData filter(toInteger(FiscalYear) >= $dataflow_param_fiscalyear",
+				") ~> FilterFiscalYear",
+				"FilterFiscalYear derive(TotalPaid = RegularGrossPaid + TotalOTPaid + TotalOtherPay\r",
+				") ~> derivedColumn1",
+				"derivedColumn1 aggregate(groupBy(AgencyName,",
+				"          FiscalYear),",
+				"     TotalPaid = sum(RegularGrossPaid + TotalOTPaid + TotalOtherPay)\r",
+				") ~> aggregate1"
 			]
 		}
 	}
