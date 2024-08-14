@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Dataflow_Agency",
+				"name": "dataflow_agency",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -23,12 +23,11 @@
 						"coreCount": 8,
 						"computeType": "General"
 					},
-					"traceLevel": "Fine",
-					"runConcurrently": false
+					"traceLevel": "Fine"
 				}
 			},
 			{
-				"name": "Dataflow_Emp",
+				"name": "dataflow_emp",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -52,7 +51,7 @@
 				}
 			},
 			{
-				"name": "Dataflow_Title",
+				"name": "dataflow_title",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -76,69 +75,25 @@
 				}
 			},
 			{
-				"name": "dataflow_payroll2020",
+				"name": "Load_2021_Payroll_Data",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
-						"activity": "Dataflow_Emp",
+						"activity": "dataflow_agency",
 						"dependencyConditions": [
-							"Completed"
+							"Succeeded"
 						]
 					},
 					{
-						"activity": "Dataflow_Title",
+						"activity": "dataflow_emp",
 						"dependencyConditions": [
-							"Completed"
+							"Succeeded"
 						]
 					},
 					{
-						"activity": "Dataflow_Agency",
+						"activity": "dataflow_title",
 						"dependencyConditions": [
-							"Completed"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"dataflow": {
-						"referenceName": "Load_2020_Payroll_Data",
-						"type": "DataFlowReference"
-					},
-					"compute": {
-						"coreCount": 8,
-						"computeType": "General"
-					},
-					"traceLevel": "Fine"
-				}
-			},
-			{
-				"name": "dataflow_payroll2021",
-				"type": "ExecuteDataFlow",
-				"dependsOn": [
-					{
-						"activity": "Dataflow_Emp",
-						"dependencyConditions": [
-							"Succeeded",
-							"Completed"
-						]
-					},
-					{
-						"activity": "Dataflow_Title",
-						"dependencyConditions": [
-							"Completed"
-						]
-					},
-					{
-						"activity": "Dataflow_Agency",
-						"dependencyConditions": [
-							"Completed"
+							"Succeeded"
 						]
 					}
 				],
@@ -163,19 +118,62 @@
 				}
 			},
 			{
+				"name": "Load_2020_Payroll_Data",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "dataflow_agency",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "dataflow_emp",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "dataflow_title",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "Load_2020_Payroll_Data",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
 				"name": "Dataflow_Summary",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
-						"activity": "dataflow_payroll2021",
+						"activity": "Load_2020_Payroll_Data",
 						"dependencyConditions": [
-							"Completed"
+							"Succeeded"
 						]
 					},
 					{
-						"activity": "dataflow_payroll2020",
+						"activity": "Load_2021_Payroll_Data",
 						"dependencyConditions": [
-							"Completed"
+							"Succeeded"
 						]
 					}
 				],
